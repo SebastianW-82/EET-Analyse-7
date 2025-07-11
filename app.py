@@ -94,7 +94,7 @@ else:
                     c.drawString(2 * cm, 26.5 * cm, f"{column}:")
                     c.drawImage(image_path, 2 * cm, 15 * cm, width=16 * cm, height=8 * cm)
 
-                    text_y = 10.5
+                    text_y = 14.5
                     stats = [
                         f"Wert zur ISIN: {user_value}",
                         f"Anzahl ISINs Peergroup: {num_values}",
