@@ -38,7 +38,7 @@ else:
         </style>
     """, unsafe_allow_html=True)
 
-    user_isin = st.text_input("Bitte geben Sie eine ISIN ein:").strip().upper()
+    user_isin = st.text_input("Geben Sie bitte eine ISIN ein:").strip().upper()
 
     if st.button("Analyse starten"):
         if user_isin not in data['ISIN'].values:
@@ -51,7 +51,7 @@ else:
             klassifikation_label = f"Art. {int(user_klassifikation)}"
 
             st.markdown(f"""
-                <div style='background-color:#1f77b4; padding: 15px; border-radius: 5px; width: fit-content;'>
+                <div style='background-color:#00a0de; padding: 15px; border-radius: 5px; width: fit-content;'>
                     <h4 style='color: white;'>Daten zur ISIN {user_isin}</h4>
                     <p style='color: white;'>Klassifikation: {klassifikation_label}</p>
                     <ul style='color: white;'>
@@ -70,18 +70,21 @@ else:
                 percentile = (subset[column] < user_value).mean() * 100
                 num_values = subset[column].count()
 
-                col1, col2 = st.columns([3, 1])
+                col1, col2 = st.columns([3, 1], gap='large')
 
                 with col1:
                     fig, ax = plt.subplots(figsize=(8, 3.5))
                     ax.hist(subset[column], bins=10, edgecolor='black', alpha=0.3, label='Verteilung')
+
                     ax.axvline(user_value, color='red', linestyle='--', linewidth=2, label='Wert zur ISIN')
                     ax.axvline(mean_val, color='green', linestyle=':', linewidth=2, label='Mittelwert')
                     ax.axvline(median_val, color='blue', linestyle='-.', linewidth=2, label='Median')
+
                     ax.set_xlabel(column)
                     ax.set_ylabel('Häufigkeit')
                     ax.legend(prop={'size': 6})
                     ax.grid(True)
+
                     st.pyplot(fig)
 
                     buf = io.BytesIO()
@@ -92,33 +95,47 @@ else:
                     image.save(image_path)
                     c.drawString(2 * cm, 27 * cm, f"Analyse zur ISIN: {user_isin}")
                     c.drawString(2 * cm, 26.5 * cm, f"{column}:")
-                    c.drawImage(image_path, 2 * cm, 15 * cm, width=16 * cm, height=8 * cm)
+                    c.drawImage(image_path, 2 * cm, 15 * cm, width=15.9 * cm, height=7.9 * cm)
 
-                    text_y = 14.5
-                    stats = [
+                    # Grauer Kasten rechts neben dem Diagramm
+                    info_x = 15.9 * cm
+                    info_y = 23.2 * cm
+                    c.setFillColorRGB(0.97, 0.97, 0.97)
+                    c.setFont("Helvetica", 8)
+                    text_lines = [
                         f"Wert zur ISIN: {user_value}",
                         f"Anzahl ISINs Peergroup: {num_values}",
                         f"Mittelwert: {mean_val:.2f}",
                         f"Median: {median_val:.2f}",
                         f"{percentile:.1f}% der Werte sind kleiner"
                     ]
-                    for stat in stats:
-                        c.drawString(2 * cm, text_y * cm, stat)
-                        text_y -= 0.5
+                    box_height = len(text_lines) * 0.55 * cm + 0.5 * cm
+                    c.rect(info_x, info_y, 5.5 * cm, box_height, fill=1, stroke=0)
+                    c.setFillColorRGB(0, 0, 0)
+                    line_y = info_y + box_height - 0.5 * cm
+                    for line in text_lines:
+                        c.drawString(info_x + 0.3 * cm, line_y, line)
+                        line_y -= 0.55 * cm
+
+                    stats = text_lines
+
 
                     c.showPage()
 
                 with col2:
-                    st.markdown(f"""
-                    <div style='background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 5px;'>
-                        <strong>ISIN:</strong> {user_isin}<br>
-                        <strong>{column}:</strong> {user_value}<br>
-                        <strong>Anzahl ISINs Peergroup:</strong> {num_values}<br>
-                        <strong>Mittelwert:</strong> {mean_val:.1f}<br>
-                        <strong>Median:</strong> {median_val:.1f}<br>
-                        <strong>{percentile:.1f}%</strong> der Werte sind kleiner als der ISIN-Wert
-                    </div>
-                    """, unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style='background-color: #f2f2f2; padding: 10px; border-radius: 5px; margin-top: 0px;'>
+        <strong>ISIN:</strong> {user_isin}<br>
+        <strong>{column}:</strong> {user_value}<br>
+        <strong>Anzahl ISINs Peergroup:</strong> {num_values}<br>
+        <strong>Mittelwert:</strong> {mean_val:.1f}<br>
+        <strong>Median:</strong> {median_val:.1f}<br>
+        <strong>{percentile:.1f}%</strong> der Werte sind kleiner als der ISIN-Wert
+    </div>
+    """, unsafe_allow_html=True)
+
+                # Separater Legendenkasten unterhalb (rechts)
+
 
             c.save()
             pdf_buffer.seek(0)
