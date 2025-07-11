@@ -110,7 +110,7 @@ else:
 
                 with col2:
                     st.markdown(f"""
-                    <div style='background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 5px;'>
+                    <div style='background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-top: 0px;'>
                         <strong>ISIN:</strong> {user_isin}<br>
                         <strong>{column}:</strong> {user_value}<br>
                         <strong>Anzahl ISINs Peergroup:</strong> {num_values}<br>
