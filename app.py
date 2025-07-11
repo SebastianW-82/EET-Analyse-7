@@ -80,7 +80,7 @@ else:
                     ax.axvline(median_val, color='blue', linestyle='-.', linewidth=2, label='Median')
                     ax.set_xlabel(column)
                     ax.set_ylabel('Häufigkeit')
-                    ax.legend()
+                    ax.legend(prop={'size': 6})
                     ax.grid(True)
                     st.pyplot(fig)
 
